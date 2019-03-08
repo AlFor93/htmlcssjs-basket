@@ -34,10 +34,10 @@ function getRandomPlayer () {
     "points": getRandom(0,70),
     "bounces": getRandom(0,100),
     "fouls": getRandom(0,30),
-    "two perc correct": twoCorrect,
-    "two perc wrong": twoWrong,
-    "three perc correct": threeCorrect,
-    "three perc wrong": threeWrong
+    "twoPercCorrect": twoCorrect,
+    "twoPercWrong": twoWrong,
+    "threePercCorrect": threeCorrect,
+    "threePercWrong": threeWrong
   }
   // console.log(player);
   return player;
@@ -62,7 +62,7 @@ function getThingsOrdered(a, b){
   return 0;
 }
 
-//UTILIZZANDO LA GET_RANDOM_PLAYER GENERO N PLAYER CASUALI
+//UTILIZZANDO LA GET_RANDOM_PLAYER GENERO N PLAYER CASUALI E CONFRONTO CHE SIANO TUTTI DIVERSI GRAZIE ALLA IS_PRESENT
 function getRandomPlayers () {
   var players = [];
   var rndNumOfPlayers = getRandom (20,1000)
@@ -73,7 +73,7 @@ function getRandomPlayers () {
   while (players.length<rndNumOfPlayers) {
     var rndPlayer = getRandomPlayer();
     if (!isPresent(rndPlayer,players)) {
-        players.push(rndPlayer);
+      players.push(rndPlayer);
     }
   }
   players.sort(getThingsOrdered);
@@ -81,8 +81,75 @@ function getRandomPlayers () {
   return players;
 }
 
+//FUNZIONE PER IDENTIFICARE I PLAYER CON L'ID CORRISPONDENTE
+function getPlayerById (id,players) {
+  var player;
+  for (var i = 0; i < players.length; i++) {
+    if(id == players[i].id){
+      player = players[i];
+    }
+  }
+  return player;
+}
 
+//FUNZIONE PER CARICARE I PLAYER NELLA PAGINA HTML
+function updateUserData (players) {
+  var datalist = $("#players");
+  for (var i = 0; i < players.length; i++) {
+    var player = players[i];
+    var opt = document.createElement("option");
+    opt.value = player.id;
+    datalist.append(opt);
+  }
+}
 
+// FUNZIONE PER PULIRE TUTTI I CAMPI AL CLICK DEL BOTTONE
+function clearClick () {
+  var userInput = $("#usr-input");
+  var idDOM = $("#id > span.content");
+  var pointsDOM = $("#points > span.content");
+  var bouncesDOM = $("#bounces > span.content");
+  var foulsDOM = $("#fouls > span.content");
+  var twoPercCorrectDOM = $("#twoPercCorrect > span.content");
+  var twoPercWrongDOM = $("#twoPercWrong > span.content");
+  var threePercCorrectDOM = $("#threePercCorrect > span.content");
+  var threePercWrongDOM = $("#threePercWrong > span.content");
+
+  userInput.val("");
+  idDOM.text("");
+  pointsDOM.text("");
+  bouncesDOM.text("");
+  foulsDOM.text("");
+  twoPercCorrectDOM.text("");
+  twoPercWrongDOM.text("");
+  threePercCorrectDOM.text("");
+  threePercWrongDOM.text("");
+}
+
+//FUNZIONE PER CARICARE TUTTI I DATI DEI PLAYER
+function updatePlayersData (players) {
+  var me = $("#usr-input");
+  var selectedId = me.val();
+  var player = getPlayerById(selectedId, players);
+
+  var idDOM = $("#id > span.content");
+  var pointsDOM = $("#points > span.content");
+  var bouncesDOM = $("#bounces > span.content");
+  var foulsDOM = $("#fouls > span.content");
+  var twoPercCorrectDOM = $("#twoPercCorrect > span.content");
+  var twoPercWrongDOM = $("#twoPercWrong > span.content");
+  var threePercCorrectDOM = $("#threePercCorrect > span.content");
+  var threePercWrongDOM = $("#threePercWrong > span.content");
+
+  idDOM.text(player.id);
+  pointsDOM.text(player.points);
+  bouncesDOM.text(player.bounces);
+  foulsDOM.text(player.fouls);
+  twoPercCorrectDOM.text(player.twoPercCorrect + "%");
+  twoPercWrongDOM.text(player.twoPercWrong + "%");
+  threePercCorrectDOM.text(player.threePercCorrect + "%");
+  threePercWrongDOM.text(player.threePercWrong + "%");
+}
 
 
 
@@ -105,12 +172,18 @@ function getRandomPlayers () {
 
 
 function init() {
-// console.log(getRandomChar ());
-// console.log("random id: " + getRandomId());
-// getRandomPlayer();
-getRandomPlayers();
-
-
+  // console.log(getRandomChar ());
+  // console.log("random id: " + getRandomId());
+  // getRandomPlayer();
+  var players = getRandomPlayers();
+  updateUserData (players);
+  var myBtn = $("#clear-btn");
+  myBtn.click(clearClick);
+  var userInput = $("#usr-input")
+  userInput.on("change", function (){
+    updatePlayersData(players);
+  });
 }
+
 
 $(document).ready(init);
